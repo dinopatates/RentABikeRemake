@@ -10,6 +10,8 @@ COPY frontend/package*.json ./
 # Installer dépendances
 RUN npm install
 
+RUN npm install tailwindcss @tailwindcss/vite
+
 # Copier le reste
 COPY frontend .
 
