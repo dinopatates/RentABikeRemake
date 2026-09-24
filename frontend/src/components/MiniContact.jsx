@@ -1,8 +1,10 @@
+import Icon from "./Icon";
+
 export default function MiniContact() {
     return (
-        <div className="flex flex-col gap-2">
-            <p>Need help?</p>
-            <p>+33 6 12 34 56 78</p>
+        <div className="mini-contact">
+            <span className="help-icon"><Icon name="phone" size={16} /></span>
+            <span><small>Need help?</small><strong>+996 247-1680</strong></span>
         </div>
     )
 }
