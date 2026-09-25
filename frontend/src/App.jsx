@@ -4,6 +4,8 @@ import Vehicles from "./pages/Vehicles";
 import Details from "./pages/Details";
 import AboutUs from "./pages/AboutUs";
 import Contact from "./pages/Contact";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
 
 export default function App() {
     return (
@@ -14,6 +16,8 @@ export default function App() {
                 <Route path="/details" element={<Details />} />
                 <Route path="/about-us" element={<AboutUs />} />
                 <Route path="/contact" element={<Contact />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/register" element={<Register />} />
             </Routes>
         </BrowserRouter>
     );
