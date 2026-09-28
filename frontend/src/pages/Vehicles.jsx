@@ -1,22 +1,37 @@
+import { useEffect, useState } from "react";
 import Layout from "../layouts/Layout";
 import VehicleCard from "../components/VehicleCard";
-import Icon from "../components/Icon";
-
-const vehicles = [
-  { name: "Mercedes", type: "Sedan", price: 25, seats: 5 },
-  { name: "Mercedes", type: "Sport", price: 50, seats: 2 },
-  { name: "Mercedes", type: "Sedan", price: 45, seats: 5 },
-  { name: "Porsche", type: "SUV", price: 40, seats: 5 },
-  { name: "Toyota", type: "Sedan", price: 35, seats: 5 },
-  { name: "Porsche", type: "SUV", price: 50, seats: 7 },
-  { name: "Toyota", type: "Minivan", price: 42, seats: 7 },
-  { name: "Mercedes", type: "Cabriolet", price: 55, seats: 2 },
-  { name: "Porsche", type: "Sport", price: 65, seats: 2 },
-];
+import Loading from "../components/Loading";
 
 export default function Vehicles() {
+  const [vehicles, setVehicles] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [activeCategory, setActiveCategory] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function loadCatalog() {
+      try {
+        const response = await fetch("/api/cars", { headers: { Accept: "application/json" } });
+        const data = await response.json();
+
+        setVehicles(data.cars || []);
+        setCategories(data.categories || []);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    loadCatalog();
+  }, []);
+
+  const filteredVehicles = activeCategory === null
+    ? vehicles
+    : vehicles.filter((vehicle) => vehicle.categories.some((category) => category.id === activeCategory));
+
   return (
     <Layout>
+      {loading && <Loading />}
       <main className="mx-auto max-w-6xl px-6 pb-20">
         <section className="mb-12 rounded-2xl bg-[#5534e7] px-8 py-14 text-white md:px-16">
           <p className="mb-3 text-xs font-extrabold uppercase tracking-[1.5px] text-white/80">Our collection</p>
@@ -24,13 +39,13 @@ export default function Vehicles() {
           <p className="mt-5 max-w-lg text-base leading-relaxed text-white/80">Browse our comfortable, reliable cars and choose the one that fits your plans.</p>
         </section>
         <div className="mb-8 flex flex-wrap items-center justify-between gap-4">
-          <div><h2 className="text-2xl font-bold">All vehicles</h2><p className="mt-1 text-sm text-gray-600">{vehicles.length} cars available for your journey</p></div>
+          <div><h2 className="text-2xl font-bold">All vehicles</h2><p className="mt-1 text-sm text-gray-600">{filteredVehicles.length} cars available for your journey</p></div>
           <div className="flex flex-wrap gap-2">
-            {["All cars", "Sedan", "SUV", "Sport"].map((filter, index) => <button className={`min-h-10 rounded-full px-4 text-sm font-bold ${index === 0 ? "bg-[#5534e7] text-white" : "border border-gray-200 bg-white text-gray-700"}`} type="button" key={filter}>{filter}</button>)}
+            <button className={`min-h-10 rounded-full px-4 text-sm font-bold transition-colors ${activeCategory === null ? "bg-[#5534e7] text-white" : "border border-gray-200 bg-white text-gray-700 hover:bg-gray-50"}`} onClick={() => setActiveCategory(null)} type="button">All cars</button>
+            {categories.map((category) => <button className={`min-h-10 rounded-full px-4 text-sm font-bold transition-colors ${activeCategory === category.id ? "bg-[#5534e7] text-white" : "border border-gray-200 bg-white text-gray-700 hover:bg-gray-50"}`} onClick={() => setActiveCategory(category.id)} type="button" key={category.id}>{category.name}</button>)}
           </div>
         </div>
-        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">{vehicles.map((vehicle) => <VehicleCard vehicle={vehicle} key={`${vehicle.name}-${vehicle.type}-${vehicle.price}`} />)}</div>
-        <button className="mx-auto mt-10 flex min-h-11 items-center gap-2 rounded-lg border border-[#5534e7] px-5 text-sm font-bold text-[#5534e7]" type="button">Load more cars <Icon name="arrow" size={18} /></button>
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">{filteredVehicles.map((vehicle) => <VehicleCard vehicle={{ ...vehicle, name: `${vehicle.brand} ${vehicle.model}`, type: vehicle.categories.map((category) => category.name).join(", "), price: vehicle.price_per_day }} key={vehicle.id} />)}</div>
       </main>
     </Layout>
   );

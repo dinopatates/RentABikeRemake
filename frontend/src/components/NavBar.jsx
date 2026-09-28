@@ -1,21 +1,66 @@
 import Brand from "./Brand";
 import Icon from "./Icon";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 
 export default function NavBar() {
+  const navigate = useNavigate();
+  const [user, setUser] = useState(() => JSON.parse(localStorage.getItem("user") || "null"));
+  const [loggingOut, setLoggingOut] = useState(false);
+
+  // synchro user au localStorage
+  useEffect(() => {
+    function syncUser() {
+      setUser(JSON.parse(localStorage.getItem("user") || "null"));
+    }
+
+    // écoute les changements du localstorage
+    window.addEventListener("storage", syncUser);
+    return () => window.removeEventListener("storage"
+      , syncUser);
+  }, []);
+
+  async function handleLogout() {
+    setLoggingOut(true);
+
+    try {
+      await fetch("/api/logout", {
+        method: "POST",
+        credentials: "include",
+        headers: { Accept: "application/json" },
+      });
+    } finally {
+      localStorage.removeItem("user");
+      setUser(null);
+      setLoggingOut(false);
+      navigate("/");
+    }
+  }
+
   return (
     <header className="mx-auto flex h-20 max-w-6xl items-center justify-between gap-8 px-6">
       <Link to="/" aria-label="Car Rental home"><Brand /></Link>
       <nav className="hidden items-center gap-8 text-sm md:flex" aria-label="Main navigation">
-        <a className="text-[#5534e7]" href="/">Home</a>
-        <a className="hover:text-[#5534e7]" href="/vehicles">Vehicles</a>
-        <a className="hover:text-[#5534e7]" href="/details">Details</a>
-        <a className="hover:text-[#5534e7]" href="/about-us">About Us</a>
-        <a className="hover:text-[#5534e7]" href="/contact">Contact Us</a>
+        <Link className="text-[#5534e7]" to="/">Home</Link>
+        <Link className="hover:text-[#5534e7]" to="/vehicles">Vehicles</Link>
+        <Link className="hover:text-[#5534e7]" to="/about-us">About Us</Link>
+        <Link className="hover:text-[#5534e7]" to="/contact">Contact Us</Link>
       </nav>
       <div className="flex items-center gap-3 text-sm">
-        <Link className="font-bold hover:text-[#5534e7]" to="/login">Login</Link>
-        <Link className="rounded-lg bg-[#ff9e0b] px-4 py-2 font-bold text-white" to="/register">Register</Link>
+        {user ? (
+          <>
+            <span className="font-bold text-[#5534e7]">Hi {user.name}</span>
+            <button className="inline-flex items-center gap-2 rounded-lg bg-[#ff9e0b] px-4 py-2 font-bold text-white transition-colors hover:bg-[#ffb83d] disabled:cursor-not-allowed disabled:opacity-80" disabled={loggingOut} onClick={handleLogout} type="button">
+              Déconnexion
+              {loggingOut && <span aria-label="Déconnexion en cours" className="h-4 w-4 animate-spin rounded-full border-2 border-white/50 border-t-white" role="status" />}
+            </button>
+          </>
+        ) : (
+          <>
+            <Link className="font-bold hover:text-[#5534e7]" to="/login">Login</Link>
+            <Link className="rounded-lg bg-[#ff9e0b] px-4 py-2 font-bold text-white transition-colors hover:bg-[#ffb83d]" to="/register">Register</Link>
+          </>
+        )}
       </div>
       <a className="hidden items-center gap-3 text-sm md:flex" href="tel:+9962471680">
         <span className="grid h-8 w-8 place-items-center rounded-full bg-[#5534e7] text-white"><Icon name="phone" size={18} /></span>
