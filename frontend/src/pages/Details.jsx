@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import Layout from "../layouts/Layout";
 import Icon from "../components/Icon";
-import Loading from "../components/Loading";
 import VehicleCard from "../components/VehicleCard";
 import VehicleCarousel from "../components/VehicleCarousel";
 
@@ -39,7 +38,20 @@ export default function Details() {
   }, [carId]);
 
   if (loading) {
-    return <><Layout /><Loading /></>;
+    return (
+      <Layout>
+        <main className="mx-auto max-w-6xl px-6 pb-20">
+          <section className="grid animate-pulse grid-cols-2 gap-10 rounded-2xl bg-gray-50 p-6 md:p-10 max-md:grid-cols-1" aria-label="Chargement du véhicule">
+            <div className="min-h-72 rounded-xl bg-gray-200" />
+            <div className="flex flex-col justify-center gap-4">
+              <div className="h-4 w-24 rounded bg-gray-200" />
+              <div className="h-10 w-3/4 rounded bg-gray-200" />
+              <div className="h-24 rounded bg-gray-200" />
+            </div>
+          </section>
+        </main>
+      </Layout>
+    );
   }
 
   if (!vehicle) {
@@ -68,7 +80,7 @@ export default function Details() {
         <div className="mb-8 flex items-center gap-2 text-sm text-gray-600"><Link className="hover:text-[#5534e7]" to="/">Home</Link><span>/</span><Link className="hover:text-[#5534e7]" to="/vehicles">Vehicles</Link><span>/</span><span className="font-bold text-gray-900">{vehicleName}</span></div>
         <section className="grid grid-cols-2 gap-10 rounded-2xl bg-gray-50 p-6 md:p-10 max-md:grid-cols-1">
           <VehicleCarousel alt={vehicleName} images={vehicle.images.map((image) => image.image_url)} />
-          <div className="flex flex-col justify-center"><p className="mb-3 text-xs font-extrabold uppercase tracking-[1.5px] text-[#5534e7]">Available now</p><div className="flex items-start justify-between gap-4"><div><h1 className="text-4xl font-bold">{vehicleName}</h1><p className="mt-2 text-base text-gray-600">{vehicleType}</p></div><p className="text-right"><strong className="block text-2xl text-[#5534e7]">${vehicle.price_per_day}</strong><span className="text-sm text-gray-600">per day</span></p></div><p className="mt-7 text-base leading-relaxed text-gray-600">{vehicle.description}</p><div className="my-8 grid grid-cols-2 gap-4">{details.map(([label, value, icon]) => <div className="flex items-center gap-3 rounded-lg border border-gray-200 bg-white p-3" key={label}><span className="text-[#5534e7]"><Icon name={icon} size={22} /></span><span><strong className="block text-sm">{value}</strong><small className="text-xs text-gray-600">{label}</small></span></div>)}</div><button className="flex min-h-12 items-center justify-center gap-2 rounded-lg bg-[#ff9e0b] text-base font-bold text-white transition-colors hover:bg-[#ffb83d]" type="button">Book this car <Icon name="arrow" size={19} /></button></div>
+          <div className="flex flex-col justify-center"><p className="mb-3 text-xs font-extrabold uppercase tracking-[1.5px] text-[#5534e7]">Available now</p><div className="flex items-start justify-between gap-4"><div><h1 className="text-4xl font-bold">{vehicleName}</h1><p className="mt-2 text-base text-gray-600">{vehicleType}</p></div><p className="text-right"><strong className="block text-2xl text-[#5534e7]">${vehicle.price_per_day}</strong><span className="text-sm text-gray-600">per day</span></p></div><p className="mt-7 text-base leading-relaxed text-gray-600">{vehicle.description}</p><div className="my-8 grid grid-cols-2 gap-4">{details.map(([label, value, icon]) => <div className="flex items-center gap-3 rounded-lg border border-gray-200 bg-white p-3" key={label}><span className="text-[#5534e7]"><Icon name={icon} size={22} /></span><span><strong className="block text-sm">{value}</strong><small className="text-xs text-gray-600">{label}</small></span></div>)}</div><Link className="flex min-h-12 items-center justify-center gap-2 rounded-lg bg-[#ff9e0b] text-base font-bold text-white transition-colors hover:bg-[#ffb83d]" to={`/?car=${vehicle.id}#booking`}>Book this car <Icon name="arrow" size={19} /></Link></div>
         </section>
         <section className="pt-16"><div className="mb-7 flex items-end justify-between"><div><p className="mb-3 text-xs font-extrabold uppercase tracking-[1.5px] text-[#5534e7]">You may also like</p><h2 className="text-3xl font-bold">Other cars</h2></div><Link className="flex min-h-10 items-center gap-2 text-sm font-bold text-[#5534e7]" to="/vehicles">View all <Icon name="arrow" size={18} /></Link></div><div className="grid grid-cols-3 gap-5 max-md:grid-cols-1">{otherVehicles.map((car) => <VehicleCard key={car.id} vehicle={{ ...car, name: `${car.brand} ${car.model}`, type: car.categories.map((category) => category.name).join(", "), price: car.price_per_day }} />)}</div></section>
       </main>

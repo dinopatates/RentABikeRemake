@@ -1,29 +1,88 @@
-import Icon from "./Icon";
+import { useEffect, useState } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
-const fields = [
-  { label: "Car type", value: "Choose a car", icon: "chevron" },
-  { label: "Place of rental", value: "Select a location", icon: "location" },
-  { label: "Place of return", value: "Select a location", icon: "location" },
-  { label: "Rental date", value: "Choose a date", icon: "calendar" },
-  { label: "Return date", value: "Choose a date", icon: "calendar" },
-];
+function today() {
+  return new Date().toISOString().slice(0, 10);
+}
 
 export default function BookingForm() {
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const [cars, setCars] = useState([]);
+  const [form, setForm] = useState({ car_id: searchParams.get("car") || "", start_date: "", end_date: "" });
+  const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    // pour permettre au formulaire d'avoir la liste des véhicules sans forcément dépendre d'un composant qui l'aurait fait
+    fetch("/api/cars", { headers: { Accept: "application/json" } })
+      .then((response) => response.json())
+      .then((data) => setCars(data.cars || []))
+      .catch(() => setMessage("Impossible de charger les véhicules."));
+  }, []);
+
+  function updateField(event) {
+    setForm({ ...form, [event.target.name]: event.target.value });
+    setMessage("");
+  }
+
+  async function handleSubmit(event) {
+    event.preventDefault();
+    const user = JSON.parse(localStorage.getItem("user") || "null");
+
+    if (!user) {
+      navigate("/login");
+      return;
+    }
+
+    setLoading(true);
+    setMessage("");
+
+    try {
+      const response = await fetch("/api/bookings", {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify(form),
+      });
+      const data = await response.json();
+
+      if (!response.ok) {
+        setMessage(data.message || Object.values(data.errors || {}).flat()[0] || "Réservation impossible.");
+        return;
+      }
+
+      setMessage(`Réservation confirmée : ${data.booking.total_price} €.`);
+      setForm({ ...form, start_date: "", end_date: "" });
+    } catch {
+      setMessage("Le serveur est indisponible pour le moment.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
   return (
-    <form className="absolute bottom-6 right-8 z-10 w-56 rounded-xl bg-white p-5 text-gray-900 shadow-xl max-md:inset-x-6 max-md:bottom-6 max-md:w-auto" onSubmit={(event) => event.preventDefault()}>
+    <form className="absolute bottom-6 right-8 z-10 w-56 rounded-xl bg-white p-5 text-gray-900 shadow-xl max-md:inset-x-6 max-md:bottom-6 max-md:w-auto" id="booking" onSubmit={handleSubmit}>
       <h2 className="mb-4 text-center text-base font-bold">Book your car</h2>
-      <div className="grid gap-2 max-md:grid-cols-2">
-        {fields.map((field) => (
-          <label className={`text-[10px] text-gray-600 ${field.label === "Car type" ? "max-md:col-span-2" : ""}`} key={field.label}>
-            <span className="mb-1 ml-1 block">{field.label}</span>
-            <button type="button" className="flex min-h-10 w-full items-center justify-between rounded border border-gray-200 bg-white px-3 py-2 text-xs text-gray-600">
-              <span>{field.value}</span>
-              <Icon name={field.icon} size={14} />
-            </button>
-          </label>
-        ))}
+      <div className="grid gap-2">
+        <label className="grid gap-1 text-[10px] text-gray-600">
+          Vehicle
+          <select className="min-h-10 rounded border border-gray-200 bg-white px-3 text-xs text-gray-600" name="car_id" onChange={updateField} required value={form.car_id}>
+            <option value="">Choose a car</option>
+            {cars.map((car) => <option key={car.id} value={car.id}>{car.brand} {car.model}</option>)}
+          </select>
+        </label>
+        <label className="grid gap-1 text-[10px] text-gray-600">
+          Rental date
+          <input className="min-h-10 rounded border border-gray-200 px-3 text-xs text-gray-600" min={today()} name="start_date" onChange={updateField} required type="date" value={form.start_date} />
+        </label>
+        <label className="grid gap-1 text-[10px] text-gray-600">
+          Return date
+          <input className="min-h-10 rounded border border-gray-200 px-3 text-xs text-gray-600" min={form.start_date || today()} name="end_date" onChange={updateField} required type="date" value={form.end_date} />
+        </label>
       </div>
-      <button className="mt-4 min-h-10 w-full rounded bg-[#ff9e0b] text-sm font-bold text-white" type="submit">Book now</button>
+      {message && <p className="mt-3 text-xs text-[#5534e7]" role="status">{message}</p>}
+      <button className="mt-4 min-h-10 w-full rounded bg-[#ff9e0b] text-sm font-bold text-white disabled:opacity-60" disabled={loading} type="submit">{loading ? "Booking..." : "Book now"}</button>
     </form>
   );
 }

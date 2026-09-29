@@ -18,7 +18,6 @@ return new class extends Migration
             $table->unsignedSmallInteger('year');
             $table->decimal('price_per_day', 10, 2);
             $table->text('description')->nullable();
-            $table->unsignedTinyInteger('seats');
             $table->string('transmission');
             $table->string('fuel_type');
             $table->timestamps();

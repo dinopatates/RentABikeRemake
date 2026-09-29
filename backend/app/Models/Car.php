@@ -14,7 +14,6 @@ class Car extends Model
         'year',
         'price_per_day',
         'description',
-        'seats',
         'transmission',
         'fuel_type',
     ];
@@ -24,7 +23,6 @@ class Car extends Model
         return [
             'year' => 'integer',
             'price_per_day' => 'decimal:2',
-            'seats' => 'integer',
         ];
     }
 

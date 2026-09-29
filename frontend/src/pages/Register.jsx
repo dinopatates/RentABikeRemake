@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Layout from "../layouts/Layout";
-import Loading from "../components/Loading";
 
 export default function Register() {
   const navigate = useNavigate();
@@ -55,7 +54,6 @@ export default function Register() {
 
   return (
     <Layout>
-      {loading && <Loading />}
       <main className="mx-auto grid max-w-6xl items-center gap-12 px-6 pb-20 pt-10 md:grid-cols-2">
         <section>
           <p className="mb-3 text-xs font-extrabold uppercase tracking-[1.5px] text-[#ff9e0b]">Join the ride</p>
@@ -69,7 +67,7 @@ export default function Register() {
           <label className="grid gap-2 text-sm font-bold">Password<input className="min-h-12 rounded-lg border border-gray-300 px-4 text-base font-normal outline-none focus:border-[#5534e7] focus:ring-2 focus:ring-[#5534e7]/20" minLength="8" name="password" onChange={updateField} required type="password" value={form.password} /></label>
           <label className="grid gap-2 text-sm font-bold">Confirm password<input className="min-h-12 rounded-lg border border-gray-300 px-4 text-base font-normal outline-none focus:border-[#5534e7] focus:ring-2 focus:ring-[#5534e7]/20" name="password_confirmation" onChange={updateField} required type="password" value={form.password_confirmation} /></label>
           {message && <p className="text-sm text-[#5534e7]" role="status">{message}</p>}
-          <button className="min-h-12 rounded-lg bg-[#ff9e0b] px-5 text-base font-bold text-white transition-colors hover:bg-[#ffb83d]" type="submit">Register</button>
+          <button className="min-h-12 rounded-lg bg-[#ff9e0b] px-5 text-base font-bold text-white transition-colors hover:bg-[#ffb83d] disabled:cursor-not-allowed disabled:opacity-60" disabled={loading} type="submit">{loading ? "Création..." : "Register"}</button>
           <p className="text-center text-sm text-gray-600">Deja un compte ? <Link className="font-bold text-[#5534e7]" to="/login">Login</Link></p>
         </form>
       </main>

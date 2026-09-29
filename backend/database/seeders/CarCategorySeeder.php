@@ -13,10 +13,10 @@ class CarCategorySeeder extends Seeder
         $now = now();
 
         foreach ([
-            'Toyota|Yaris' => ['Citadine'],
-            'Tesla|Model 3' => ['Berline', 'Electrique'],
-            'Ford|Mustang Mach-E' => ['SUV', 'Electrique'],
-            'BMW|Serie 3' => ['Berline'],
+            'Honda|PCX 125' => ['Scooter', '125 cc'],
+            'Yamaha|MT-07' => ['Moto'],
+            'Piaggio|Liberty 125' => ['Scooter', '125 cc'],
+            'Kawasaki|Z650' => ['Moto'],
         ] as $car => $carCategories) {
             [$brand, $model] = explode('|', $car);
             $carId = DB::table('cars')

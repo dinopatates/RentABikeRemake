@@ -5,12 +5,10 @@ import FeatureStrip from "../components/FeatureStrip";
 import VehicleCard from "../components/VehicleCard";
 import StatsBand from "../components/StatsBand";
 import Icon from "../components/Icon";
-import Loading from "../components/Loading";
 import { Link } from "react-router-dom";
 
 export default function Home() {
   const [vehicles, setVehicles] = useState([]);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function loadVehicles() {
@@ -24,8 +22,8 @@ export default function Home() {
           type: car.categories.map((category) => category.name).join(", "),
           price: car.price_per_day,
         })));
-      } finally {
-        setLoading(false);
+      } catch {
+        setVehicles([]);
       }
     }
 
@@ -34,7 +32,6 @@ export default function Home() {
 
     return (
         <Layout>
-      {loading && <Loading />}
           <HeroSection />
           <FeatureStrip />
           <section className="mx-auto grid max-w-6xl grid-cols-2 items-center gap-11 px-6 py-4 pb-16 max-md:grid-cols-1">

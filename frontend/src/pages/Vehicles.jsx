@@ -1,13 +1,11 @@
 import { useEffect, useState } from "react";
 import Layout from "../layouts/Layout";
 import VehicleCard from "../components/VehicleCard";
-import Loading from "../components/Loading";
 
 export default function Vehicles() {
   const [vehicles, setVehicles] = useState([]);
   const [categories, setCategories] = useState([]);
   const [activeCategory, setActiveCategory] = useState(null);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function loadCatalog() {
@@ -17,8 +15,9 @@ export default function Vehicles() {
 
         setVehicles(data.cars || []);
         setCategories(data.categories || []);
-      } finally {
-        setLoading(false);
+      } catch {
+        setVehicles([]);
+        setCategories([]);
       }
     }
 
@@ -31,7 +30,6 @@ export default function Vehicles() {
 
   return (
     <Layout>
-      {loading && <Loading />}
       <main className="mx-auto max-w-6xl px-6 pb-20">
         <section className="mb-12 rounded-2xl bg-[#5534e7] px-8 py-14 text-white md:px-16">
           <p className="mb-3 text-xs font-extrabold uppercase tracking-[1.5px] text-white/80">Our collection</p>

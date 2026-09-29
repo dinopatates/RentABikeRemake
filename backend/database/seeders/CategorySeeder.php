@@ -11,7 +11,7 @@ class CategorySeeder extends Seeder
     {
         $now = now();
 
-        foreach (['Citadine', 'SUV', 'Berline', 'Electrique'] as $name) {
+        foreach (['Scooter', 'Moto', 'Electrique', '125 cc'] as $name) {
             DB::table('categories')->insert([
                 'name' => $name,
                 'created_at' => $now,

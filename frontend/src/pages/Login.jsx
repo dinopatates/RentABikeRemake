@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Layout from "../layouts/Layout";
-import Loading from "../components/Loading";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -42,7 +41,6 @@ export default function Login() {
 
   return (
     <Layout>
-      {loading && <Loading />}
       <main className="mx-auto grid max-w-6xl items-center gap-12 px-6 pb-20 pt-10 md:grid-cols-2">
         <section>
           <p className="mb-3 text-xs font-extrabold uppercase tracking-[1.5px] text-[#5534e7]">Welcome back</p>
@@ -61,7 +59,7 @@ export default function Login() {
             Password
             <input className="min-h-12 rounded-lg border border-gray-300 px-4 text-base font-normal outline-none focus:border-[#5534e7] focus:ring-2 focus:ring-[#5534e7]/20" name="password" onChange={updateField} required type="password" value={form.password} /></label>
           {message && <p className="text-sm text-[#5534e7]" role="status">{message}</p>}
-          <button className="min-h-12 rounded-lg bg-[#5534e7] px-5 text-base font-bold text-white transition-colors hover:bg-[#7058ed]" type="submit">Login</button>
+          <button className="min-h-12 rounded-lg bg-[#5534e7] px-5 text-base font-bold text-white transition-colors hover:bg-[#7058ed] disabled:cursor-not-allowed disabled:opacity-60" disabled={loading} type="submit">{loading ? "Connexion..." : "Login"}</button>
           <p className="text-center text-sm text-gray-600">Pas encore de compte ? <Link className="font-bold text-[#5534e7]" to="/register">Register</Link></p>
         </form>
       </main>
