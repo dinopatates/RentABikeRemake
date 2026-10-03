@@ -11,12 +11,12 @@ class BookingSeeder extends Seeder
     {
         $now = now();
         $users = DB::table('users')->pluck('id', 'email');
-        $cars = DB::table('cars')->get()->keyBy(fn ($car) => $car->brand.'|'.$car->model);
+        $vehicles = DB::table('vehicles')->get()->keyBy(fn ($vehicle) => $vehicle->brand.'|'.$vehicle->model);
 
         DB::table('bookings')->insert([
             [
                 'user_id' => $users['test@example.com'],
-                'car_id' => $cars['Toyota|Yaris']->id,
+                'vehicle_id' => $vehicles['Honda|PCX 125']->id,
                 'start_date' => '2026-10-05',
                 'end_date' => '2026-10-08',
                 'total_price' => 119.70,
@@ -26,7 +26,7 @@ class BookingSeeder extends Seeder
             ],
             [
                 'user_id' => $users['marie@example.com'],
-                'car_id' => $cars['Tesla|Model 3']->id,
+                'vehicle_id' => $vehicles['Yamaha|MT-07']->id,
                 'start_date' => '2026-11-12',
                 'end_date' => '2026-11-15',
                 'total_price' => 239.70,

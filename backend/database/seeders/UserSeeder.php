@@ -11,14 +11,16 @@ class UserSeeder extends Seeder
     public function run(): void
     {
         foreach ([
-            ['name' => 'Test User', 'email' => 'test@example.com'],
-            ['name' => 'Marie Dupont', 'email' => 'marie@example.com'],
-            ['name' => 'Lucas Martin', 'email' => 'lucas@example.com'],
+            ['name' => 'Admin Ride Libre', 'email' => 'admin@example.com', 'role' => 'admin'],
+            ['name' => 'Test User', 'email' => 'test@example.com', 'role' => 'user'],
+            ['name' => 'Marie Dupont', 'email' => 'marie@example.com', 'role' => 'user'],
+            ['name' => 'Lucas Martin', 'email' => 'lucas@example.com', 'role' => 'user'],
         ] as $user) {
             DB::table('users')->insert([
                 'name' => $user['name'],
                 'email' => $user['email'],
                 'password' => Hash::make('password'),
+                'role' => $user['role'],
             ]);
         }
     }

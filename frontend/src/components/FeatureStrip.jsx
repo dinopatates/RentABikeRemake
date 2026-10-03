@@ -1,9 +1,9 @@
 import Icon from "./Icon";
 
 const features = [
-  { icon: "location", title: "Availability", text: "Find a car wherever you are, whenever you need it." },
-  { icon: "car", title: "Comfort", text: "Travel in comfort with a car that fits your journey." },
-  { icon: "wallet", title: "Savings", text: "Premium cars and fair prices made for every trip." },
+  { icon: "location", title: "Disponibilité", text: "Trouvez une moto ou un scooter quand vous en avez besoin." },
+  { icon: "motorcycle", title: "Liberté", text: "Un deux-roues fiable pour chaque trajet." },
+  { icon: "wallet", title: "Économies", text: "Des motos et scooters entretenus à prix juste." },
 ];
 
 export default function FeatureStrip() {

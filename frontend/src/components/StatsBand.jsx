@@ -1,5 +1,5 @@
 const stats = [
-  ["540+", "Cars", "car"],
+  ["540+", "Deux-roues", "motorcycle"],
   ["20k+", "Customers", "users"],
   ["25+", "Years", "calendar"],
   ["20m+", "Miles", "location"],

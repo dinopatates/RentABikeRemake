@@ -2,16 +2,19 @@
 
 use Illuminate\Support\Facades\Route;
 
-use App\Http\Controllers\Api\CarController;
+use App\Http\Controllers\Api\VehicleController;
 use App\Http\Controllers\Api\BookingController;
 use App\Http\Controllers\Api\AuthController;
 
-// CARS
-Route::get('/cars', [CarController::class, 'index']);
-Route::get('/cars/{car}', [CarController::class, 'show']);
-Route::post('/cars', [CarController::class, 'store']);
-Route::match(['put', 'patch'], '/cars/{car}', [CarController::class, 'update']);
-Route::delete('/cars/{car}', [CarController::class, 'destroy']);
+// VEHICLES
+Route::get('/vehicles', [VehicleController::class, 'index']);
+Route::get('/vehicles/{vehicle}', [VehicleController::class, 'show']);
+// crud
+Route::middleware(['auth:sanctum', 'admin'])->group(function () {
+	Route::post('/vehicles', [VehicleController::class, 'store']);
+	Route::match(['put', 'patch'], '/vehicles/{vehicle}', [VehicleController::class, 'update']);
+	Route::delete('/vehicles/{vehicle}', [VehicleController::class, 'destroy']);
+});
 // BOOKINGS: les réservations sont privées et nécessitent une session Sanctum.
 Route::middleware('auth:sanctum')->group(function () {
 	Route::get('/bookings', [BookingController::class, 'index']);

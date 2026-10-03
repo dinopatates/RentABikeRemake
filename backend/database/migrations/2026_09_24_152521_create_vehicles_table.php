@@ -11,10 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('car_category', function (Blueprint $table) {
+        Schema::create('vehicles', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('car_id')->constrained('cars')->onDelete('cascade');
-            $table->foreignId('category_id')->constrained('categories')->onDelete('cascade');
+            $table->string('brand');
+            $table->string('model');
+            $table->unsignedSmallInteger('year');
+            $table->decimal('price_per_day', 10, 2);
+            $table->text('description')->nullable();
+            $table->string('transmission');
+            $table->string('fuel_type');
             $table->timestamps();
         });
     }
@@ -24,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('car_category');
+        Schema::dropIfExists('vehicles');
     }
 };

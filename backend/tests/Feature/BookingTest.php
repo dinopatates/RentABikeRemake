@@ -3,7 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\Booking;
-use App\Models\Car;
+use App\Models\Vehicle;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
@@ -22,21 +22,20 @@ class BookingTest extends TestCase
         ]);
     }
 
-    public function test_authenticated_user_can_book_an_available_car(): void
+    public function test_authenticated_user_can_book_an_available_vehicle(): void
     {
         $user = $this->createUser();
-        $car = Car::create([
+        $vehicle = Vehicle::create([
             'brand' => 'Test',
-            'model' => 'Car',
+            'model' => 'Scooter',
             'year' => 2025,
             'price_per_day' => 49.90,
-            'seats' => 5,
             'transmission' => 'automatic',
             'fuel_type' => 'hybrid',
         ]);
 
         $response = $this->actingAs($user, 'sanctum')->postJson('/api/bookings', [
-            'car_id' => $car->id,
+            'vehicle_id' => $vehicle->id,
             'start_date' => '2026-10-05',
             'end_date' => '2026-10-08',
         ]);
@@ -47,27 +46,26 @@ class BookingTest extends TestCase
 
         $this->assertDatabaseHas('bookings', [
             'user_id' => $user->id,
-            'car_id' => $car->id,
+            'vehicle_id' => $vehicle->id,
             'total_price' => 149.70,
         ]);
     }
 
-    public function test_a_car_cannot_be_booked_twice_on_overlapping_dates(): void
+    public function test_a_vehicle_cannot_be_booked_twice_on_overlapping_dates(): void
     {
         $user = $this->createUser();
-        $car = Car::create([
+        $vehicle = Vehicle::create([
             'brand' => 'Test',
-            'model' => 'Car',
+            'model' => 'Scooter',
             'year' => 2025,
             'price_per_day' => 50,
-            'seats' => 5,
             'transmission' => 'manual',
             'fuel_type' => 'petrol',
         ]);
 
         Booking::create([
             'user_id' => $user->id,
-            'car_id' => $car->id,
+            'vehicle_id' => $vehicle->id,
             'start_date' => '2026-10-05',
             'end_date' => '2026-10-08',
             'total_price' => 150,
@@ -76,18 +74,18 @@ class BookingTest extends TestCase
 
         $this->actingAs($user, 'sanctum')
             ->postJson('/api/bookings', [
-                'car_id' => $car->id,
+                'vehicle_id' => $vehicle->id,
                 'start_date' => '2026-10-07',
                 'end_date' => '2026-10-10',
             ])
             ->assertUnprocessable()
-            ->assertJsonValidationErrors('car_id');
+            ->assertJsonValidationErrors('vehicle_id');
     }
 
     public function test_booking_creation_requires_authentication(): void
     {
         $this->postJson('/api/bookings', [
-            'car_id' => 1,
+            'vehicle_id' => 1,
             'start_date' => '2026-10-05',
             'end_date' => '2026-10-08',
         ])->assertUnauthorized();

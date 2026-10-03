@@ -6,6 +6,7 @@ import AboutUs from "./pages/AboutUs";
 import Contact from "./pages/Contact";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+import AdminVehicles from "./pages/AdminVehicles";
 
 export default function App() {
     return (
@@ -13,6 +14,7 @@ export default function App() {
             <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/vehicles" element={<Vehicles />} />
+                <Route path="/admin/vehicles" element={<AdminVehicles />} />
                 <Route path="/details" element={<Details />} />
                 <Route path="/about-us" element={<AboutUs />} />
                 <Route path="/contact" element={<Contact />} />

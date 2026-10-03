@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Booking;
-use App\Models\Car;
+use App\Models\Vehicle;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 
@@ -16,7 +16,7 @@ class BookingController extends Controller
         return response()->json([
             'bookings' => $request->user()
                 ->bookings()
-                ->with('car.images', 'car.categories')
+                ->with('vehicle.images', 'vehicle.categories')
                 ->latest()
                 ->get(),
         ]);
@@ -26,15 +26,15 @@ class BookingController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'car_id' => ['required', 'integer', 'exists:cars,id'],
+            'vehicle_id' => ['required', 'integer', 'exists:vehicles,id'],
             'start_date' => ['required', 'date', 'after_or_equal:today'],
             'end_date' => ['required', 'date', 'after:start_date'],
         ]);
 
-        $car = Car::findOrFail($validated['car_id']);
+        $vehicle = Vehicle::findOrFail($validated['vehicle_id']);
 
         //regarde les moindres conflits de dates
-        $overlapExists = $car->bookings()
+        $overlapExists = $vehicle->bookings()
             ->whereIn('status', ['pending', 'confirmed'])
             ->whereDate('start_date', '<', $validated['end_date'])
             ->whereDate('end_date', '>', $validated['start_date'])
@@ -42,7 +42,7 @@ class BookingController extends Controller
 
         if ($overlapExists) {
             throw ValidationException::withMessages([
-                'car_id' => ['Ce véhicule est déjà réservé sur cette période.'],
+                'vehicle_id' => ['Ce véhicule est déjà réservé sur cette période.'],
             ]);
         }
 
@@ -50,16 +50,16 @@ class BookingController extends Controller
             ->diffInDays(now()->parse($validated['end_date']));
 
         $booking = $request->user()->bookings()->create([
-            'car_id' => $car->id,
+            'vehicle_id' => $vehicle->id,
             'start_date' => $validated['start_date'],
             'end_date' => $validated['end_date'],
-            'total_price' => $car->price_per_day * $days,
+            'total_price' => $vehicle->price_per_day * $days,
             'status' => 'pending',
         ]);
 
         return response()->json([
             'message' => 'Réservation créée avec succès.',
-            'booking' => $booking->load('car.images', 'car.categories'),
+            'booking' => $booking->load('vehicle.images', 'vehicle.categories'),
         ], 201);
     }
 
@@ -70,7 +70,7 @@ class BookingController extends Controller
     {
         abort_unless($booking->user_id === $request->user()->id, 404);
 
-        return response()->json($booking->load('car.images', 'car.categories'));
+        return response()->json($booking->load('vehicle.images', 'vehicle.categories'));
     }
 
     /**

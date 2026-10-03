@@ -9,8 +9,8 @@ class Category extends Model
 {
     protected $fillable = ['name'];
 
-    public function cars(): BelongsToMany
+    public function vehicles(): BelongsToMany
     {
-        return $this->belongsToMany(Car::class, 'car_category');
+        return $this->belongsToMany(Vehicle::class, 'category_vehicle');
     }
 }

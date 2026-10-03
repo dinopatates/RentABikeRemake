@@ -9,7 +9,7 @@ class Booking extends Model
 {
     protected $fillable = [
         'user_id',
-        'car_id',
+        'vehicle_id',
         'start_date',
         'end_date',
         'total_price',
@@ -30,8 +30,8 @@ class Booking extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function car(): BelongsTo
+    public function vehicle(): BelongsTo
     {
-        return $this->belongsTo(Car::class);
+        return $this->belongsTo(Vehicle::class);
     }
 }

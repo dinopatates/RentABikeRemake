@@ -3,24 +3,23 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\Car;
+use App\Models\Vehicle;
 use App\Models\Category;
 use Illuminate\Http\Request;
 
-class CarController extends Controller
+class VehicleController extends Controller
 {
 	public function index()
 	{
-        // envoi de la liste des voitures et des catégories
 		return response()->json([
-			'cars' => Car::with('categories', 'images')->get(),
+			'vehicles' => Vehicle::with('categories', 'images')->get(),
 			'categories' => Category::orderBy('name')->get(['id', 'name']),
 		]);
 	}
 
-	public function show(Car $car)
+	public function show(Vehicle $vehicle)
 	{
-		return response()->json($car->load('categories', 'images'));
+		return response()->json($vehicle->load('categories', 'images'));
 	}
 
 	public function store(Request $request)
@@ -29,27 +28,27 @@ class CarController extends Controller
 		$categoryIds = $validated['category_ids'] ?? [];
 		unset($validated['category_ids']);
 
-		$car = Car::create($validated);
-		$car->categories()->sync($categoryIds);
+		$vehicle = Vehicle::create($validated);
+		$vehicle->categories()->sync($categoryIds);
 
-		return response()->json($car->load('categories', 'images'), 201);
+		return response()->json($vehicle->load('categories', 'images'), 201);
 	}
 
-	public function update(Request $request, Car $car)
+	public function update(Request $request, Vehicle $vehicle)
 	{
 		$validated = $this->validateVehicle($request);
 		$categoryIds = $validated['category_ids'] ?? [];
 		unset($validated['category_ids']);
 
-		$car->update($validated);
-		$car->categories()->sync($categoryIds);
+		$vehicle->update($validated);
+		$vehicle->categories()->sync($categoryIds);
 
-		return response()->json($car->load('categories', 'images'));
+		return response()->json($vehicle->load('categories', 'images'));
 	}
 
-	public function destroy(Car $car)
+	public function destroy(Vehicle $vehicle)
 	{
-		$car->delete();
+		$vehicle->delete();
 
 		return response()->json(['message' => 'Véhicule supprimé.']);
 	}

@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Model;
 
-class Car extends Model
+class Vehicle extends Model
 {
     protected $fillable = [
         'brand',
@@ -28,7 +28,7 @@ class Car extends Model
 
     public function images(): HasMany
     {
-        return $this->hasMany(CarImage::class);
+        return $this->hasMany(VehicleImage::class);
     }
 
     public function bookings(): HasMany
@@ -38,6 +38,6 @@ class Car extends Model
 
     public function categories(): BelongsToMany
     {
-        return $this->belongsToMany(Category::class, 'car_category');
+        return $this->belongsToMany(Category::class, 'category_vehicle');
     }
 }

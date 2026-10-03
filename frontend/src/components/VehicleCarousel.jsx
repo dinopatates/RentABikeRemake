@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-const fallbackImage = "https://images.unsplash.com/photo-1553440569-bcc63803a83d?auto=format&fit=crop&w=1200&q=80";
+const fallbackImage = "https://images.unsplash.com/photo-1558980664-10ea0a71e9e3?auto=format&fit=crop&w=1200&q=80";
 
 export default function VehicleCarousel({ images = [], alt }) {
   const carouselImages = images.length > 0 ? images : [fallbackImage];

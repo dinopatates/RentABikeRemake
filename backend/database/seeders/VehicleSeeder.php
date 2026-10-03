@@ -5,13 +5,13 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
-class CarSeeder extends Seeder
+class VehicleSeeder extends Seeder
 {
     public function run(): void
     {
         $now = now();
 
-        foreach ([
+        $vehicles = [
             [
                 'brand' => 'Honda',
                 'model' => 'PCX 125',
@@ -48,12 +48,21 @@ class CarSeeder extends Seeder
                 'transmission' => 'Manuelle',
                 'fuel_type' => 'Essence',
             ],
-        ] as $car) {
-            DB::table('cars')->insert([
-                ...$car,
-                'created_at' => $now,
-                'updated_at' => $now,
-            ]);
+        ];
+
+        $existingIds = DB::table('vehicles')->orderBy('id')->pluck('id')->all();
+        foreach ($vehicles as $index => $vehicle) {
+            $attributes = [...$vehicle, 'updated_at' => $now];
+
+            if (isset($existingIds[$index])) {
+                DB::table('vehicles')->where('id', $existingIds[$index])->update($attributes);
+            } else {
+                DB::table('vehicles')->insert([...$attributes, 'created_at' => $now]);
+            }
+        }
+
+        if (count($existingIds) > count($vehicles)) {
+            DB::table('vehicles')->whereIn('id', array_slice($existingIds, count($vehicles)))->delete();
         }
     }
 }

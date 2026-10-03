@@ -2,7 +2,7 @@ import Layout from "../layouts/Layout";
 import Icon from "../components/Icon";
 import { Link } from "react-router-dom";
 
-const contacts = [["Call us", "+537 547-6401", "phone"], ["Write to us", "hello@carrental.com", "wallet"], ["Find us", "Oxford Ave, Cary, NC 27511", "location"]];
+const contacts = [["Appelez-nous", "+537 547-6401", "phone"], ["Écrivez-nous", "hello@ridelibre.com", "wallet"], ["Trouvez-nous", "Oxford Ave, Cary, NC 27511", "location"]];
 
 export default function Contact() {
   return (

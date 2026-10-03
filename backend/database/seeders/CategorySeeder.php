@@ -11,12 +11,26 @@ class CategorySeeder extends Seeder
     {
         $now = now();
 
-        foreach (['Scooter', 'Moto', 'Electrique', '125 cc'] as $name) {
-            DB::table('categories')->insert([
-                'name' => $name,
-                'created_at' => $now,
-                'updated_at' => $now,
-            ]);
+        $names = ['Scooter', 'Moto', 'Electrique', '125 cc'];
+        $existingIds = DB::table('categories')->orderBy('id')->pluck('id')->all();
+
+        foreach ($names as $index => $name) {
+            if (isset($existingIds[$index])) {
+                DB::table('categories')->where('id', $existingIds[$index])->update([
+                    'name' => $name,
+                    'updated_at' => $now,
+                ]);
+            } else {
+                DB::table('categories')->insert([
+                    'name' => $name,
+                    'created_at' => $now,
+                    'updated_at' => $now,
+                ]);
+            }
+        }
+
+        if (count($existingIds) > count($names)) {
+            DB::table('categories')->whereIn('id', array_slice($existingIds, count($names)))->delete();
         }
     }
 }
